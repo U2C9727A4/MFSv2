@@ -55,7 +55,7 @@ They follow the same structure as the normal message types, expect for the fact 
 1: get_size. `size[4]`. size is little-endian. size represents the maximum message size the server can handle.  
 2: get_async_size. `amount[2]`. amount is little-endian. Amount represents the maximum in-flight messages the server can handle. amount is uint16.  
 3: get_attributes. `attributes[1]`. Attributes represent the attribute bitmask of the file at path. attributes is uint8.  
-4: set_p2p_mode. Adds no additional headers. Response only sent when the mode switching is successful. in-flight messages are invalidated and cleared when switching happens.  
+4: set_p2p_mode. Adds no additional headers. Response only sent when the mode switching is successful. in-flight messages that are sent before the switch are invalidated and cleared when switching happens.  
 5: seek_read. `data_len[4], data[data_len]`. data_len is little endian. data_len represents the data lenght and data represents the data that was read. data_len is uint32.   
 6: seek_write. `bytes_written[4]` bytes_written is little endian. bytes_written represents the amount of bytes that was written to the file. bytes_written is an uint32.  
 7: get_file. `data_len[4], data[data_len]`. data_len is little endian. data_len represents the data lenght and data represents the data that was read. data_len is uint32.  
