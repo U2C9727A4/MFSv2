@@ -44,7 +44,9 @@ MFSv2 supporting servers must implement the following message types (Numbers in 
 3: get_attributes. `path_len[4], path[path_len]`. Gets the attributes of given file at the path.  path_len is a little endian uint32 defining the lenght of the path, which is a ASCII string.  
 4: set_p2p_mode. Adds no additional headers. Swiches the connection into a peer-to-peer mode as defined above.  
 5: seek_read. `path_len[4], path[path_len], seek[4], amount[4]`. path_len, seek and amount are little endian. path_len is the lenght of the path, which is an ASCII string. seek is the offset to start reading from and amount is the amount of bytes to read.  
-6: seek_write. `path_len[4], path[path_len], seek[4], data_len[4], data[data_size]`. path_len, seek and data_len is little-endian. path_len is the lenght of the path, which is an ASCII string, seek is the offset to start writing from, data_len is the lenght of the data which is the data to write to the file. Writes data_len amount of bytes at seek `seek` to the file at path.  
+6: seek_write. `path_len[4], path[path_len], seek[4], data_len[4], data[data_len]`. path_len, seek and data_len is little-endian. path_len is the lenght of the path, which is an ASCII string, seek is the offset to start writing from, data_len is the lenght of the data which is the data to write to the file. Writes data_len amount of bytes at seek `seek` to the file at path.  
+7: get_file. `path_len[4], path[path_len]`. path_len is little endian. Gets the entire contents of the file. Does not require seeking support.  
+8: replace_file. `path_len[4], path[path_len], data_len[4], data[data_len],` data_len and path_len is little endian. Replaces the entire contents of the file. Does not require seeking support.  
   
 # File attributes
 In MFSv2, there is 3 attributes:  
@@ -53,5 +55,11 @@ atomic,
 seeking support.
 
 read-write mode defines the reading and writing mode of the file.  
-atomic files are files which cannot partially written or read from.  
+atomic files are whoose read and write operations happen atomically per message. 
 seeking files are files that support seeking.  
+File attributes are 8 bits. (leftmost bit is highest bit)  
+    x x x x 0 0 0 0  
+highest bit is read bit (Determines if the file can be read from)  
+second highest is write bit (Determines if the file can be written to)  
+third highest is atomic bit (Determines if the file is atomic)  
+fourth highest bit is the seek bit (Determines if the file supports seeked operations.)
