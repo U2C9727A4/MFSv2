@@ -14,7 +14,7 @@ And the connection starts off with the connection initiator being a client, and 
 
 # Peer to Peer mode  
 In peer to peer mode, each side can send MFS requests to one another. Making both sides a server and a client at the same time over a single link.  
-However, this comes at the risk of double the chance of ID collissions. Due to this, both sides must take care to not use the same ID as one another.  
+However, peer to peer mode is still point-to-point. There is only two peers. No more is allowed. This simply shifts MFS from client to server to server-to-server.  
   
 # Base headers  
 Base headers (unchanging accross versions) are defined as:  
