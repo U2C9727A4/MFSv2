@@ -77,3 +77,11 @@ highest bit is read bit (Determines if the file can be read from)
 second highest is write bit (Determines if the file can be written to)  
 third highest is atomic bit (Determines if the file is atomic)  
 fourth highest bit is the seek bit (Determines if the file supports seeked operations.)
+
+# Async and concurrency.
+In MFS, each client has a queue which represents the requests it has sent. a request can be removed from the query only when it's response is sent back to the user.  
+There is no pre-emption. A request is fully processed and request sent when the server decides to process it. However, all request have a priority value due to the base headers.  
+the message with the highest priority is processed first. If multiple messages exist with the same priority value, then FCFS is used among them.  
+as context into other sections aswell, in-flight messages are messages that have been sent but haven't recieved a response yet.  
+  
+The same goes for concurrent access to files. although, files can use FCFS queues instead of a priority queue if priority-based access isn't required. This is up for the implementations of MFS to decide.
