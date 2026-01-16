@@ -23,7 +23,7 @@ len is the total lenght of the entire MFS message (Including itself). (Little en
 id is the message id of the message. (Little endian). (ID collissions are allowed as long as it is unique among in-flight requests.)  
 version is the MFS version of the message. (Little Endian). (Details in a later section.)  
 type is the request type. Explained in a later section. (Little endian).  
-crc is the crc of the entire message. (CRC should be computed as if it was filled as zeros during computation. CRC computations beings from the start of base headers).  
+crc is the crc of the entire message. (CRC should be computed as if it was filled as zeros during computation. CRC computations beings from the start of base headers). CRC-32 is used.  
 priority is the priority of this message. Higher priority requests are handled first when theres multiple in-flight requests.  
 
 # Version  
@@ -47,12 +47,13 @@ MFSv2 supporting servers must implement the following message types (Numbers in 
 6: seek_write. `path_len[4], path[path_len], seek[4], data_len[4], data[data_len]`. path_len, seek and data_len is little-endian. path_len is the lenght of the path, which is an ASCII string, seek is the offset to start writing from, data_len is the lenght of the data which is the data to write to the file. Writes data_len amount of bytes at seek `seek` to the file at path.  
 7: get_file. `path_len[4], path[path_len]`. path_len is little endian. Gets the entire contents of the file. Does not require seeking support.  
 8: replace_file. `path_len[4], path[path_len], data_len[4], data[data_len],` data_len and path_len is little endian. Replaces the entire contents of the file. Does not require seeking support.  
+9: list. `path_len[4], path[path_len]`. path_len is little endian. Lists all files and directories under given 
   
 # File attributes
 In MFSv2, there is 3 attributes:  
 read-write mode,  
 atomic,  
-seeking support.
+seeking support.  
 
 read-write mode defines the reading and writing mode of the file.  
 atomic files are whoose read and write operations happen atomically per message. 
