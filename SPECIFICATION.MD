@@ -18,12 +18,13 @@ However, peer to peer mode is still point-to-point. There is only two peers. No 
   
 # Base headers  
 Base headers (unchanging accross versions) are defined as:  
-    len[4], id[4], version[2], type[2], crc[4]  
+    len[4], id[4], version[2], type[2], crc[4], priority[1]  
 len is the total lenght of the entire MFS message (Including itself). (Little endian).  
 id is the message id of the message. (Little endian). (ID collissions are allowed as long as it is unique among in-flight requests.)  
 version is the MFS version of the message. (Little Endian). (Details in a later section.)  
 type is the request type. Explained in a later section. (Little endian).  
 crc is the crc of the entire message. (CRC should be computed as if it was filled as zeros during computation. CRC computations beings from the start of base headers).  
+priority is the priority of this message. Higher priority requests are handled first when theres multiple in-flight requests.  
 
 # Version  
 The highest 8 bits are major version.  
