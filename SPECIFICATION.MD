@@ -30,13 +30,27 @@ The highest 8 bits are major version.
 The lower 8 bits are minor version.  
 This is MFSv2. Which makes its version:  
     `0x0200` in hexidecimal.  
-
+  
 # Message types
-These are additional headers that are appended to the base headers, as the type directs.
+These are additional headers that are appended to the base headers, as the type directs.  
+The highest bit is the response bit (used for responses to a specific message type)  
+the second highest bit is the error bit. (used for indicating the message has resulted in an error.)  
+  
 MFSv2 supporting servers must implement the following message types (Numbers in decimal):  
 0: noop. Adds no additional headers. No operation.  
 1: get_size. Adds no additional headers.  Gets the maximum message lenght the server can support.  
 2: get_async_size. Adds no additional headers.  Gets the maximum amount of messages the server can handle. (Maximum in-flight messages).  
 3: get_attributes. `path_len[4], path[path_len]`. Gets the attributes of given file at the path.  path_len is a little endian uint32 defining the lenght of the path, which is a ASCII string.  
 4: set_p2p_mode. Adds no additional headers. Swiches the connection into a peer-to-peer mode as defined above.  
-5: seek_read. `path_len[4], path[path_len], offset[4], amount[4]`
+5: seek_read. `path_len[4], path[path_len], seek[4], amount[4]`. path_len, seek and amount are little endian. path_len is the lenght of the path, which is an ASCII string. seek is the offset to start reading from and amount is the amount of bytes to read.  
+6: seek_write. `path_len[4], path[path_len], seek[4], data_len[4], data[data_size]`. path_len, seek and data_len is little-endian. path_len is the lenght of the path, which is an ASCII string, seek is the offset to start writing from, data_len is the lenght of the data which is the data to write to the file. Writes data_len amount of bytes at seek `seek` to the file at path.  
+  
+# File attributes
+In MFSv2, there is 3 attributes:  
+read-write mode,  
+atomic,  
+seeking support.
+
+read-write mode defines the reading and writing mode of the file.  
+atomic files are files which cannot partially written or read from.  
+seeking files are files that support seeking.  
