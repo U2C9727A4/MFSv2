@@ -39,7 +39,7 @@ the second highest bit is the error bit. (used for indicating the message has re
   
 MFSv2 supporting servers must implement the following message types (Numbers in decimal):  
 0: noop. Adds no additional headers. No operation.  
-1: get_size. Adds no additional headers.  Gets the maximum message lenght the server can support.  
+1: get_size. Adds no additional headers.  Gets the maximum message lenght the server can both recieve and send.  
 2: get_async_size. Adds no additional headers.  Gets the maximum amount of messages the server can handle. (Maximum in-flight messages).  
 3: get_attributes. `path_len[4], path[path_len]`. Gets the attributes of given file at the path.  path_len is a little endian uint32 defining the lenght of the path, which is a ASCII string. path_len is an uint32.  
 4: set_p2p_mode. Adds no additional headers. Swiches the connection into a peer-to-peer mode as defined above.  
@@ -61,7 +61,25 @@ They follow the same structure as the normal message types, expect for the fact 
 7: get_file. `data_len[4], data[data_len]`. data_len is little endian. data_len represents the data lenght and data represents the data that was read. data_len is uint32.  
 8: replace_file. No additional headers. a non-error return means the file was successfully replaced.  
 9: list. `files_len[4], files[files_len], dirs_len[4] , dirs[dirs_len]`. 
+TODO: Finish this.
+
+## Message errors
+All errors (error type bit set) follow these headers:  
+err[4]. err is little-endian. err represents the error code. err is an uint32.  
   
+An error cannot be a request onto itself, due to this an error bit set asserts that the response bit is set aswell.  
+  
+### Error codes  
+(Error codes are in decimal)  
+Error codes ranging from 0 to 1000 are queue errors.  
+0: Queue is full.  
+Error codes ranging from 1000 to 2000 are message errors  
+1000: CRC verification failure.  
+1001: Message bigger than buffers.  
+1002: Unsupported version.  
+1003: Unsupported message type.  
+1004: ID collision.
+
 # File attributes
 In MFSv2, there is 3 attributes:  
 read-write mode,  
@@ -84,4 +102,7 @@ There is no pre-emption. A request is fully processed and request sent when the 
 the message with the highest priority is processed first. If multiple messages exist with the same priority value, then FCFS is used among them.  
 as context into other sections aswell, in-flight messages are messages that have been sent but haven't recieved a response yet.  
   
-The same goes for concurrent access to files. although, files can use FCFS queues instead of a priority queue if priority-based access isn't required. This is up for the implementations of MFS to decide.
+The same goes for concurrent access to files. although, files can use FCFS queues instead of a priority queue if priority-based access isn't required. This is up for the implementations of MFS to decide.  
+
+# Retries
+
