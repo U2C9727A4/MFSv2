@@ -124,3 +124,16 @@ A maximum of 5 retries should be attempted before giving up.
 
 # Paths
 Paths in MFS are slash-seperated (/) and must NOT include NULL bytes inside of them. (0x00)  
+
+# Parsing rules  
+Message lenght verification happens before parsing begins
+The parser must first read the entire message into an internal buffer. The first step is to verify base headers.  
+base header verification includes:  
+version checks  
+CRC verification  
+ID verification
+and type verification.
+
+after base header verifications are complete, message-type dependent headers are parsed and then dispatched by the queue.
+
+
